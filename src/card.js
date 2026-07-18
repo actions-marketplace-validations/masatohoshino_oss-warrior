@@ -24,7 +24,7 @@ export function card(p) {
   const W = 640;
   const dbl = p.crowns >= 2;
   const honorH = p.honors.length ? 30 : 0;
-  const H = 272 + honorH;
+  const H = 280 + honorH;
   const L = 30, R = W - 30;
 
   // league split line, ordered by power
@@ -39,9 +39,9 @@ export function card(p) {
       `<tspan fill="#dfe3e8" font-weight="600"> ${fmt(l.power)}</tspan>`;
   }).join(`<tspan fill="#5f6875"> · </tspan>`);
 
-  // rank plaque (pips = crowns when 2+ leagues are superhuman)
+  // rank plaque (pips = crowns when 2+ leagues are superhuman); metal name only
   const tag = p.overall
-    ? `${'◆'.repeat(p.pips)} RANK ${p.overall.metal}` : 'UNRANKED';
+    ? `${'◆'.repeat(p.pips)} ${p.overall.metal}` : 'UNRANKED';
   const tagW = Math.max(90, wTxt(tag, 11) + 30);
   const tagX = R - tagW;
 
@@ -52,7 +52,7 @@ export function card(p) {
       ? `${b.n}${b.glue ? '' : ' '}${b.text}` : b.text;
     const w = wTxt(text, 11.5) + 26;
     const el = `
-    <g transform="translate(${bx},${222 + honorH})">
+    <g transform="translate(${bx},${230 + honorH})">
       <rect width="${w}" height="24" rx="12" fill="#181c22"
         stroke="${b.rare ? mix(M.rank, '#323a45', 0.6) : '#323a45'}"/>
       <text x="${w / 2}" y="16" text-anchor="middle" font-family="${SANS}"
@@ -67,7 +67,7 @@ export function card(p) {
     const text = `⚜ ${h.name} — ${h.detail}`;
     const w = wTxt(`HONOR${text}`, 11) + 60;
     return `
-    <g transform="translate(${L},${215})">
+    <g transform="translate(${L},${223})">
       <rect width="${w}" height="24" rx="6" fill="none" stroke="rgba(181,192,120,.35)"/>
       <rect x="4" y="5" width="42" height="14" rx="4" fill="#a8b473"/>
       <text x="25" y="15.5" text-anchor="middle" font-family="${MONO}" font-size="8"
@@ -138,19 +138,18 @@ export function card(p) {
       stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
     <text x="${tagX + tagW / 2}" y="61.5" text-anchor="middle" font-family="${MONO}"
       font-size="11" font-weight="800" letter-spacing="1" fill="#14171c">${esc(tag)}</text>
-    <text x="${R}" y="84" text-anchor="end" font-family="${MONO}" font-size="9.5"
-      fill="#5f6875">${esc(p.persona)}</text>
   </g>
 
-  <text x="${L}" y="152" font-family="${SANS}" font-size="64" font-weight="800"
+  <text x="${L}" y="160" font-family="${SANS}" font-size="64" font-weight="800"
     letter-spacing="-1.5" fill="url(#num)">${fmt(p.total)}${
       p.badges.some((b) => b.text === '⚡ Limit Break')
         ? `<tspan font-size="17" fill="#8b93a0" font-weight="500">+</tspan>` : ''}</text>
-  <text x="${L}" y="181" font-family="${MONO}" font-size="10" letter-spacing="2.4"
-    font-weight="600" fill="#8b93a0">TOTAL POWER · ${
-      p.window.days === 90 ? '90 DAYS' : esc(`${p.window.from}..${p.window.to} · 90D-NORMALIZED`)}</text>
+  <text x="${L}" y="189" font-family="${MONO}" font-size="10" letter-spacing="2.4"
+    font-weight="600" fill="#8b93a0">${
+      p.window.days === 90 ? '90 DAYS TOTAL POWER'
+        : esc(`${p.window.from} → ${p.window.to} · 90D-NORMALIZED POWER`)}</text>
 
-  <text x="${L}" y="203" font-family="${MONO}" font-size="11.5">${splitParts}</text>
+  <text x="${L}" y="211" font-family="${MONO}" font-size="11.5">${splitParts}</text>
 
   ${honor}
   ${pills}
