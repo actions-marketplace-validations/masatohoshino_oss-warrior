@@ -1,7 +1,7 @@
 name: OSS Warrior
 description: >-
-  Measure your OSS power level from public GitHub events and render a warrior
-  card into your profile README. Every contribution counts.
+  Measure your OSS power level from public GitHub events and wear it as a
+  warrior card in your profile README.
 branding:
   icon: zap
   color: yellow
