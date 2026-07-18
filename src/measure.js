@@ -135,7 +135,10 @@ export async function measure(login, opts = {}) {
   let avatar = null;
   try {
     const res = await fetch(`${user.avatar_url}&size=120`);
-    avatar = `data:image/png;base64,${Buffer.from(await res.arrayBuffer()).toString('base64')}`;
+    const buf = Buffer.from(await res.arrayBuffer());
+    const mime = res.headers.get('content-type')?.split(';')[0]
+      || (buf[0] === 0x89 ? 'image/png' : 'image/jpeg');
+    avatar = `data:${mime};base64,${buf.toString('base64')}`;
   } catch { /* card falls back to initial */ }
   let sponsors = 0;
   try {

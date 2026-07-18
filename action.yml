@@ -1,0 +1,60 @@
+name: OSS Warrior
+description: >-
+  Measure your OSS power level from public GitHub events and render a warrior
+  card into your profile README. Every contribution counts.
+branding:
+  icon: zap
+  color: yellow
+inputs:
+  login:
+    description: GitHub login to scan (defaults to the repository owner)
+    required: false
+  days:
+    description: Trailing window in days
+    required: false
+    default: '90'
+  own-orgs:
+    description: Comma-separated orgs to treat as your own realm (private memberships)
+    required: false
+    default: ''
+  base-url:
+    description: Public base URL where warrior/site is served (defaults to GitHub Pages)
+    required: false
+    default: ''
+  readme:
+    description: README path to update
+    required: false
+    default: 'README.md'
+  commit:
+    description: Commit and push the generated files ('true' / 'false')
+    required: false
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install renderer deps
+      shell: bash
+      run: cd "$GITHUB_ACTION_PATH" && npm ci --no-audit --no-fund
+    - name: Scan and render
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        INPUT_LOGIN: ${{ inputs.login }}
+        INPUT_DAYS: ${{ inputs.days }}
+        INPUT_OWN_ORGS: ${{ inputs.own-orgs }}
+        INPUT_BASE_URL: ${{ inputs.base-url }}
+        INPUT_README: ${{ inputs.readme }}
+      run: node "$GITHUB_ACTION_PATH/src/action-run.js"
+    - name: Commit results
+      if: ${{ inputs.commit == 'true' }}
+      shell: bash
+      run: |
+        git config user.name "oss-warrior[bot]"
+        git config user.email "oss-warrior@users.noreply.github.com"
+        git add warrior "${{ inputs.readme }}"
+        git diff --cached --quiet && echo "no changes" && exit 0
+        git commit -m "⚡ warrior scan $(date -u +%F)"
+        git push

@@ -14,7 +14,10 @@ const raw = JSON.parse(readFileSync(`${dir}/raw.json`, 'utf8'));
 if (!raw.avatar) {
   try {
     const res = await fetch(`https://github.com/${login}.png?size=120`);
-    raw.avatar = `data:image/png;base64,${Buffer.from(await res.arrayBuffer()).toString('base64')}`;
+    const buf = Buffer.from(await res.arrayBuffer());
+    const mime = res.headers.get('content-type')?.split(';')[0]
+      || (buf[0] === 0x89 ? 'image/png' : 'image/jpeg');
+    raw.avatar = `data:${mime};base64,${buf.toString('base64')}`;
   } catch { /* initial-letter fallback */ }
 }
 const profile = score(raw);
