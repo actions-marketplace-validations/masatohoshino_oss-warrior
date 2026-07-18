@@ -79,13 +79,12 @@ export function score(raw) {
   };
   const total = cPower + mPower + sPower;
 
-  // ranks / pips / crowns / dominant (SPEC §5)
-  const byRank = Object.entries(leagues).sort((a, b) => b[1].rank - a[1].rank);
-  const topIdx = byRank[0][1].rank;
-  const secondEntry = byRank[1];
-  const showSecond = secondEntry[1].rank >= 2; // GOLD+
-  const overall = topIdx >= 0 ? LADDER[topIdx] : null;
-  const second = showSecond ? LADDER[secondEntry[1].rank] : null;
+  // overall rank = combined effort in merge-equivalents (SPEC §4 rev. 2026-07-18):
+  // per-league coefficients are unit conversions, so total effort is their sum.
+  const effTotal = cEff / COEF.contributor + mEff / COEF.maintainer + sEff / COEF.solo;
+  let overallIdx = -1;
+  for (let i = 0; i < LADDER.length; i++) if (effTotal >= LADDER[i].n) overallIdx = i;
+  const overall = overallIdx >= 0 ? LADDER[overallIdx] : null;
   const crowns = Object.values(leagues).filter((l) => l.rank >= 4).length;
   const dominant = Object.entries(leagues).sort((a, b) => b[1].power - a[1].power)[0];
 
@@ -130,11 +129,9 @@ export function score(raw) {
 
   return {
     login: raw.login, avatar: raw.avatar, scannedAt: raw.scannedAt, window: raw.window,
-    total, leagues, overall, second, pips: showSecond ? 2 : 1, crowns,
+    total, leagues, effTotal, overall, pips: crowns >= 2 ? 2 : 1, crowns,
     dominant: { league: dominant[0], metal: dominant[1].rank >= 0 ? LADDER[dominant[1].rank].metal : 'NONE' },
     affiliation, badges: badges.slice(0, 5), honors,
-    persona: overall
-      ? (second ? `${overall.persona} × ${second.persona}` : overall.persona)
-      : 'First scan — the journey begins',
+    persona: overall ? overall.persona : 'First scan — the journey begins',
   };
 }

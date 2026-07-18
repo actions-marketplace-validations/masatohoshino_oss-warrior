@@ -76,7 +76,11 @@ Capacity ladder (counts per 90 days; league unit coefficients ×1 / ×2 / ×3):
 | Super Warrior | DIAMOND | 900 | 1,800 | 2,700 | 5× pro — beyond unaided humans |
 | AI Sorcerer | **MYTHIC** | 9,000 | 18,000 | 27,000 | 50× pro — *it's over 9000* |
 
-- Overall rank = the highest league rank. Per-league ranks shown as ◆ marks.
+- **Overall rank = combined effort** (rev. 2026-07-18): league coefficients are
+  unit conversions, so total effort in merge-equivalents is
+  `E = V_eff(contributor)/1 + V_eff(maintainer)/2 + V_eff(solo)/3`, looked up on
+  the contributor column of the ladder. This keeps rank ordering coherent with
+  power for multi-league warriors. Per-league ranks remain as ◆ marks on the card.
 - Thresholds are **capacity anchors** (human-time physics), not percentiles.
   They are constants; recalibration only when personas are revised (versioned).
 - Rationale: maintaining is ~2× faster than authoring; commits are ~3× finer

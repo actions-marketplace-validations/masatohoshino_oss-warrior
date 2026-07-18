@@ -31,6 +31,8 @@ const profile = score(raw);
 
 const dir = `${opt('out') || 'out'}/${login}`;
 mkdirSync(dir, { recursive: true });
+writeFileSync(`${dir}/raw.json`, JSON.stringify(raw, (k, v) =>
+  k === 'avatar' ? undefined : v));
 writeFileSync(`${dir}/data.json`, JSON.stringify(profile, (k, v) =>
   k === 'avatar' ? undefined : v, 1));
 writeFileSync(`${dir}/card.svg`, card(profile));
@@ -38,8 +40,8 @@ writeFileSync(`${dir}/table.md`, table(profile));
 
 const L = profile.leagues;
 console.log(`\n⚡ ${login} — TOTAL POWER ${Math.round(profile.total).toLocaleString()}`);
-console.log(`   rank: ${profile.overall ? profile.overall.metal : 'UNRANKED'}${
-  profile.second ? ' + ' + profile.second.metal : ''} (${profile.persona})`);
+console.log(`   rank: ${profile.overall ? profile.overall.metal : 'UNRANKED'} ` +
+  `(${profile.persona}) · total effort ${Math.round(profile.effTotal)}`);
 for (const [name, l] of Object.entries(L)) {
   console.log(`   ${name.padEnd(11)} power ${Math.round(l.power).toLocaleString().padStart(9)}` +
     `  eff ${Math.round(l.eff).toString().padStart(6)}  rank ${l.rank}`);

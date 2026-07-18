@@ -27,7 +27,12 @@ export function table(p) {
 |---|---:|---:|---|---|
 ${rows.join('\n')}
 
-**Total power: ${fmt(p.total)}** · window ${p.window.from} → ${p.window.to} (90d-normalized ×${p.window.norm.toFixed(2)})
+**Total power: ${fmt(p.total)}** · total effort ${fmt(p.effTotal)} merge-eq${(() => {
+    const i = p.overall ? LADDER.findIndex((l) => l.metal === p.overall.metal) : -1;
+    if (i >= LADDER.length - 1) return ' (MAX RANK)';
+    const t = LADDER[i + 1];
+    return ` → ${t.metal} at ${fmt(t.n)} (${Math.min(99, Math.round(100 * p.effTotal / t.n))}%)`;
+  })()} · window ${p.window.from} → ${p.window.to} (90d-normalized ×${p.window.norm.toFixed(2)})
 
 ${honors.length ? `**Honors**\n${honors.join('\n')}\n` : ''}
 **Badges**
