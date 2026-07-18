@@ -10,8 +10,11 @@ export const LADDER = [
   { persona: 'Super Warrior', metal: 'DIAMOND', n: 900 },
   { persona: 'AI Sorcerer', metal: 'MYTHIC', n: 9000 },
 ];
-// power thresholds = capacity anchors at the standard arena: 100 × √(W0 × n)
-export const THRESHOLDS = LADDER.map((l) => 100 * Math.sqrt(W0 * l.n));
+// power thresholds = capacity anchors at the standard arena with realistic
+// persona breadth k (higher personas naturally span more repos; Σ√ is
+// super-additive in breadth): threshold = 100 × √(W0 × n × k),
+// k = [1, 1, 1.5, 2.5, 5, 10] → rounded constants (SPEC §4, cal v3.1).
+export const THRESHOLDS = [175, 600, 1650, 3700, 11600, 52000];
 export const UNIT = { contributor: 1, maintainer: 2, solo: 3 }; // acts per PR-equivalent
 export const METALS = {
   NONE: { rank: '#3d4552', f1: '#262b33', f2: '#262b33', f3: '#262b33' },

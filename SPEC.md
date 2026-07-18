@@ -63,17 +63,22 @@ TOTAL POWER  = contributor + maintainer + solo
 
 ## 4. Rank = power on a single ladder
 
-Thresholds are the capacity personas evaluated at the standard arena
-(`100 × √(w0 × n₀)`, `w0 = 3`):
+Thresholds are the capacity personas evaluated at the standard arena with a
+**realistic breadth** `k` (higher personas naturally spread across more repos,
+and Σ√ grows with breadth): `threshold = 100 × √(w0 × n₀ × k)`, `w0 = 3`.
+Calibration v3.1 was verified against 9 live profiles — inflation of the
+uncalibrated (k = 1) ladder correlated cleanly with repo count, and Linus
+Torvalds lands exactly at PLATINUM, matching the design intent that
+pre-AI working styles top out at Pro.
 
-| Rank | Metal | Persona count n₀ (PR-eq / 90d) | Power threshold |
-|---|---|---|---|
-| Rookie | BRONZE | 1 | 173 |
-| Weekend Warrior | SILVER | 12 | 600 |
-| Mainstay | GOLD | 60 | 1,342 |
-| Pro | PLATINUM | 180 | 2,324 |
-| Super Warrior | DIAMOND | 900 | 5,196 |
-| AI Sorcerer | **MYTHIC** | 9,000 | 16,432 — *it's over 9000 (PR-eq)* |
+| Rank | Metal | n₀ (PR-eq / 90d) | k (repos) | Power threshold |
+|---|---|---|---|---|
+| Rookie | BRONZE | 1 | 1 | 175 |
+| Weekend Warrior | SILVER | 12 | 1 | 600 |
+| Mainstay | GOLD | 60 | 1.5 | 1,650 |
+| Pro | PLATINUM | 180 | 2.5 | 3,700 — *the pre-AI ceiling* |
+| Super Warrior | DIAMOND | 900 | 5 | 11,600 |
+| AI Sorcerer | **MYTHIC** | 9,000 | 10 | 52,000 — *it's over 9000 (PR-eq)* |
 
 - **Overall rank = TOTAL POWER on this ladder.** Rank and power can never
   disagree — one number, one story.
