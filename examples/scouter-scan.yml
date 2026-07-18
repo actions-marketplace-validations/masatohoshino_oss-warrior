@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: masatohoshino/oss-warrior/scouter@main
+      - uses: masatohoshino/oss-warrior/scouter@v1
         with:
           login: ${{ inputs.login }}
       - name: Commit scan assets

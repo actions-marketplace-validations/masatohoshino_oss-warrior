@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: masatohoshino/oss-warrior@main
+      - uses: masatohoshino/oss-warrior@v1
         # with:
         #   own-orgs: my-private-org
       - uses: actions/configure-pages@v5

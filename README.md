@@ -57,7 +57,7 @@ Full formulas, arena weights, badges, honors, and honesty rules: [SPEC.md](./SPE
    demand:
 
    ```yaml
-   - uses: masatohoshino/oss-warrior@main
+   - uses: masatohoshino/oss-warrior@v1
      # with:
      #   own-orgs: my-private-org   # pin orgs with private membership
    ```
