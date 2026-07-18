@@ -17,6 +17,13 @@ inputs:
     description: Comma-separated orgs to treat as your own realm (private memberships)
     required: false
     default: ''
+  targets:
+    description: >-
+      Comma-separated logins to scout (their cards + X share links appear under
+      yours). Pin a target's private-org realm with "login:org1|org2",
+      e.g. "steipete:openclaw,antfu".
+    required: false
+    default: ''
   base-url:
     description: Public base URL where warrior/site is served (defaults to GitHub Pages)
     required: false
@@ -45,6 +52,7 @@ runs:
         INPUT_LOGIN: ${{ inputs.login }}
         INPUT_DAYS: ${{ inputs.days }}
         INPUT_OWN_ORGS: ${{ inputs.own-orgs }}
+        INPUT_TARGETS: ${{ inputs.targets }}
         INPUT_BASE_URL: ${{ inputs.base-url }}
         INPUT_README: ${{ inputs.readme }}
       run: node "$GITHUB_ACTION_PATH/src/action-run.js"
