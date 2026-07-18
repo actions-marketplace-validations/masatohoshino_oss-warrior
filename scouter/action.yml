@@ -1,0 +1,31 @@
+name: OSS Warrior Scouter
+description: >-
+  On-demand power scan (issue-ops): reads "scan: <login>" from the triggering
+  issue title (or the login input), renders the card and share page, and writes
+  warrior/last-scan-comment.md for the reply. Never touches the README.
+inputs:
+  login:
+    description: Account to scan (workflow_dispatch runs)
+    required: false
+    default: ''
+  base-url:
+    description: Public base URL where warrior/site is served (defaults to GitHub Pages)
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install engine deps
+      shell: bash
+      run: cd "$GITHUB_ACTION_PATH/.." && npm ci --no-audit --no-fund
+    - name: Scan target
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        TITLE: ${{ github.event.issue.title }}
+        INPUT_LOGIN: ${{ inputs.login }}
+        INPUT_BASE_URL: ${{ inputs.base-url }}
+      run: node "$GITHUB_ACTION_PATH/../src/scan-issue.js"
