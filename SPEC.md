@@ -41,50 +41,45 @@ w(repo) = log10(1 + stars + 50 × C_ext)
   a fake or solo-only repo stays at `w = 0` (anti-cheat).
 - Standard arena constant: `w0 = 3.0` (≈ a 1k-star community repo).
 
-## 3. Power (achievement — absolute, never normalized across leagues)
+## 3. Power (v3 — one formula, one unit, no penalties)
+
+All leagues measure **PR-equivalents** `n` per repo:
 
 ```
-CONTRIBUTOR power = 100 × Q² × Σ_(external repos, wins ≥ 2) √(w × wins)
-MAINTAINER  power = 100 ×       Σ_(repo × external human author) √(w × PRs)
-SOLO        power = 100 ×       Σ_(own public repos) √(w × commits)
-TOTAL POWER = sum of the three
+n(repo):
+  CONTRIBUTOR = merged PRs into the external repo   (≥ 2 wins gate)
+  MAINTAINER  = external human PRs you merged ÷ 2   (serving is ~2× faster than authoring)
+  SOLO        = default-branch commits ÷ 3          (a commit is ~⅓ of a merge)
+
+league power = 100 × Σ_repos √(w × n)
+TOTAL POWER  = contributor + maintainer + solo
 ```
 
-- `Q` = Wilson lower bound (z = 1.96) of merged / (merged + closed-unmerged)
-  over *external* PRs created in the window. (v0 limitation: author-withdrawn
-  PRs count as rejections; a later version will exclude self-closed PRs.)
-- The **≥ 2 wins gate** applies to the contributor league only: a repo counts
-  once you have landed at least two PRs there (anti drive-by).
-- Power is the spectacle: farmers and Saiyans share one scale, uncorrected.
+- **No acceptance-rate factor.** Rejected PRs are not anti-contribution — the
+  effort was spent; only landed work is counted, nothing is subtracted.
+- The **≥ 2 wins gate** (contributor only) is the anti-drive-by rule.
+- Same formula and unit everywhere: league powers are directly comparable and
+  sum meaningfully.
 
-## 4. Rank (human work rate — fair, league-relative)
+## 4. Rank = power on a single ladder
 
-Rank is determined by **effective volume**, not power:
+Thresholds are the capacity personas evaluated at the standard arena
+(`100 × √(w0 × n₀)`, `w0 = 3`):
 
-```
-V_eff(league) = Σ_units count × √(w / w0)     (arena difficulty substitutes for volume)
-```
+| Rank | Metal | Persona count n₀ (PR-eq / 90d) | Power threshold |
+|---|---|---|---|
+| Rookie | BRONZE | 1 | 173 |
+| Weekend Warrior | SILVER | 12 | 600 |
+| Mainstay | GOLD | 60 | 1,342 |
+| Pro | PLATINUM | 180 | 2,324 |
+| Super Warrior | DIAMOND | 900 | 5,196 |
+| AI Sorcerer | **MYTHIC** | 9,000 | 16,432 — *it's over 9000 (PR-eq)* |
 
-Capacity ladder (counts per 90 days; league unit coefficients ×1 / ×2 / ×3):
-
-| Rank | Metal | Contributor (×1) | Maintainer (×2) | Solo (×3) | Meaning |
-|---|---|---|---|---|---|
-| Rookie | BRONZE | 1 | 2 | 3 | you showed up — you're a warrior |
-| Weekend Warrior | SILVER | 12 | 24 | 36 | 1–2 acts a week |
-| Mainstay | GOLD | 60 | 120 | 180 | every weekday |
-| Pro | PLATINUM | 180 | 360 | 540 | 2–3 every weekday |
-| Super Warrior | DIAMOND | 900 | 1,800 | 2,700 | 5× pro — beyond unaided humans |
-| AI Sorcerer | **MYTHIC** | 9,000 | 18,000 | 27,000 | 50× pro — *it's over 9000* |
-
-- **Overall rank = combined effort** (rev. 2026-07-18): league coefficients are
-  unit conversions, so total effort in merge-equivalents is
-  `E = V_eff(contributor)/1 + V_eff(maintainer)/2 + V_eff(solo)/3`, looked up on
-  the contributor column of the ladder. This keeps rank ordering coherent with
-  power for multi-league warriors. Per-league ranks remain as ◆ marks on the card.
-- Thresholds are **capacity anchors** (human-time physics), not percentiles.
-  They are constants; recalibration only when personas are revised (versioned).
-- Rationale: maintaining is ~2× faster than authoring; commits are ~3× finer
-  than merges.
+- **Overall rank = TOTAL POWER on this ladder.** Rank and power can never
+  disagree — one number, one story.
+- League ◆ marks apply the same thresholds to each league's power.
+- Thresholds are capacity anchors (human-time physics), not percentiles;
+  constants, versioned, recalibrated only when personas are revised.
 
 ## 5. Card grammar
 
@@ -131,6 +126,5 @@ Capacity ladder (counts per 90 days; league unit coefficients ×1 / ×2 / ×3):
 - Direct-push/off-GitHub workflows under-measure (Torvalds/Evan You effect).
 - Maintainer arena discovery scans the user's own + public-org repos
   (most recently pushed, capped); org membership privacy can misclassify.
-- Q counts self-withdrawn PRs as rejections.
 - Hyperactive accounts may exceed API resource limits → lower bound shown,
   celebrated as `⚡ Limit Break`.

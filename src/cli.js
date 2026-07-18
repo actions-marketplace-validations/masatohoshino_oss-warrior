@@ -40,10 +40,8 @@ writeFileSync(`${dir}/table.md`, table(profile));
 
 const L = profile.leagues;
 console.log(`\n⚡ ${login} — TOTAL POWER ${Math.round(profile.total).toLocaleString()}`);
-console.log(`   rank: ${profile.overall ? profile.overall.metal : 'UNRANKED'} ` +
-  `(${profile.persona}) · total effort ${Math.round(profile.effTotal)}`);
+console.log(`   rank: ${profile.overall ? profile.overall.metal : 'UNRANKED'} (${profile.persona})`);
 for (const [name, l] of Object.entries(L)) {
-  console.log(`   ${name.padEnd(11)} power ${Math.round(l.power).toLocaleString().padStart(9)}` +
-    `  eff ${Math.round(l.eff).toString().padStart(6)}  rank ${l.rank}`);
+  console.log(`   ${name.padEnd(11)} power ${Math.round(l.power).toLocaleString().padStart(9)}  rank ${l.rank}`);
 }
 console.log(`   → ${dir}/card.svg, table.md, data.json`);

@@ -33,16 +33,6 @@ export async function measure(login, opts = {}) {
   const scale = merged.truncated && merged.items.length
     ? merged.total / merged.items.length : 1;
 
-  // ---- Q: external PRs created in window, merged vs closed-unmerged ------
-  log('contributor: Q outcomes');
-  const cwMerged = await searchPRs(`is:pr author:${login} is:merged created:${range}`);
-  const cwRejected = await searchPRs(
-    `is:pr author:${login} is:closed is:unmerged created:${range}`);
-  const extOf = (r) => r.items.filter(
-    (it) => !isInternal(it.repository_url.split('/').slice(-2).join('/'))).length;
-  const qWins = extOf(cwMerged);
-  const qLosses = extOf(cwRejected);
-
   // ---- maintainer: mergedBy over own+org repos (SPEC §8 discovery cap) ---
   log('maintainer: arena discovery');
   const arenas = [];
@@ -164,7 +154,7 @@ export async function measure(login, opts = {}) {
 
   return {
     login, avatar, scannedAt: iso(to), window: { from: iso(from), to: iso(to), days: windowDays, norm },
-    contributor: { extRepos, selfCount, scale, truncated: merged.truncated, qWins, qLosses },
+    contributor: { extRepos, selfCount, scale, truncated: merged.truncated },
     maintainer: { served, arenasScanned: capped.length },
     solo: { repos: soloRepos, truncated: soloTruncated },
     meta: { stars, cext },

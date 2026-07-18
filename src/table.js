@@ -1,21 +1,21 @@
 // README evaluation table (the pilot's dashboard — progress lives here, not on the card).
-import { LADDER, COEF } from './score.js';
+import { LADDER, THRESHOLDS } from './score.js';
 
 const fmt = (n) => Math.round(n).toLocaleString('en-US');
 
+function nextRank(power, rank) {
+  if (rank >= LADDER.length - 1) return 'MAX RANK';
+  const t = LADDER[rank + 1], th = THRESHOLDS[rank + 1];
+  const pct = power > 0 ? Math.min(99, Math.round(100 * power / th)) : 0;
+  return `${t.metal} at ${fmt(th)} (${pct}%)`;
+}
+
 export function table(p) {
   const rows = Object.entries(p.leagues).map(([name, l]) => {
-    const coef = COEF[name];
     const rank = l.rank >= 0 ? `${LADDER[l.rank].metal} (${LADDER[l.rank].persona})` : 'UNCHARTED';
-    let next = '—';
-    if (l.rank < LADDER.length - 1) {
-      const target = LADDER[l.rank + 1];
-      const need = target.n * coef;
-      const pct = l.eff > 0 ? Math.min(99, Math.round(100 * l.eff / need)) : 0;
-      next = `${target.metal} at ${fmt(need)} eff (${pct}%)`;
-    }
-    return `| ${name.toUpperCase()} | ${fmt(l.power)} | ${fmt(l.eff)} | ${rank} | ${next} |`;
+    return `| ${name.toUpperCase()} | ${fmt(l.power)} | ${rank} | ${nextRank(l.power, l.rank)} |`;
   });
+  const oRank = p.overall ? LADDER.findIndex((l) => l.metal === p.overall.metal) : -1;
 
   const badges = p.badges.map((b) =>
     `- ${b.n !== undefined ? `**${b.n}**${b.glue ? '' : ' '}${b.text}` : `**${b.text}**`}`);
@@ -23,16 +23,12 @@ export function table(p) {
 
   return `### Warrior status — \`${p.login}\`
 
-| League | Power | Effective volume | Rank | Next rank |
-|---|---:|---:|---|---|
+| League | Power | Rank | Next rank |
+|---|---:|---|---|
 ${rows.join('\n')}
 
-**Total power: ${fmt(p.total)}** · total effort ${fmt(p.effTotal)} merge-eq${(() => {
-    const i = p.overall ? LADDER.findIndex((l) => l.metal === p.overall.metal) : -1;
-    if (i >= LADDER.length - 1) return ' (MAX RANK)';
-    const t = LADDER[i + 1];
-    return ` → ${t.metal} at ${fmt(t.n)} (${Math.min(99, Math.round(100 * p.effTotal / t.n))}%)`;
-  })()} · window ${p.window.from} → ${p.window.to} (90d-normalized ×${p.window.norm.toFixed(2)})
+**TOTAL POWER ${fmt(p.total)}** — ${p.overall ? p.overall.metal : 'UNRANKED'} · ${
+    nextRank(p.total, oRank)} · window ${p.window.from} → ${p.window.to} (90d-normalized ×${p.window.norm.toFixed(2)})
 
 ${honors.length ? `**Honors**\n${honors.join('\n')}\n` : ''}
 **Badges**
