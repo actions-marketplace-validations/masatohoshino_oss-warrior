@@ -23,7 +23,9 @@ async function req(url, init = {}) {
         ...init.headers,
       },
     });
-    if (res.status === 403 || res.status === 429) {
+    const exhausted = res.headers.get('x-ratelimit-remaining') === '0'
+      || res.headers.get('retry-after');
+    if (res.status === 429 || (res.status === 403 && exhausted)) {
       const reset = res.headers.get('x-ratelimit-reset');
       const wait = reset ? Math.min(90, +reset - Date.now() / 1000 + 1) : 30 * (attempt + 1);
       process.stderr.write(`[gh] rate limited, waiting ${Math.ceil(wait)}s\n`);
@@ -78,6 +80,9 @@ export async function searchPRs(q, maxPages = 10) {
 // contributors count via Link header (per_page=1); minus owner happens in caller
 export async function contributorCount(repo) {
   const res = await req(`${API}/repos/${repo}/contributors?per_page=1&anon=0`);
+  // 403 without exhausted quota = "history too large to list" (e.g. torvalds/linux)
+  // — a repo that big has a maxed-out community by definition.
+  if (res.status === 403) { await res.arrayBuffer(); return 500; }
   if (res.status !== 200) return 0;
   await res.arrayBuffer(); // drain
   const link = res.headers.get('link') || '';
